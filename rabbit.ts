@@ -1,3 +1,4 @@
+import axios from 'axios';
 import amqp from 'amqplib';
 
 async function setup() {
@@ -31,4 +32,14 @@ async function sendMessage(channel: amqp.Channel, exchange: string, key: string)
     );
 
     console.log(`[x] Sent: ${message.task}`);
+}
+
+async function createVhost(vhostName: string) {
+    const auth = { username: 'guest', password: 'guest' };
+    try {
+        await axios.put(`http://localhost:15672/api/vhosts/${vhostName}`, {}, { auth });
+        console.log(`Vhost '${vhostName}' created successfully.`);
+    } catch (err) {
+        console.error('Error creating vhost: ', err);
+    }
 }
