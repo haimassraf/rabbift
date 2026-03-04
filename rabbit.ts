@@ -19,3 +19,16 @@ async function setup() {
 
     return { channel, exchangeName, routingKey };
 }
+
+async function sendMessage(channel: amqp.Channel, exchange: string, key: string) {
+    const message = { id: 1, task: 'Haim Learn RabbitMQ!' };
+
+    const sent = channel.publish(
+        exchange,
+        key,
+        Buffer.from(JSON.stringify(message)),
+        { persistent: true }
+    );
+
+    console.log(`[x] Sent: ${message.task}`);
+}
