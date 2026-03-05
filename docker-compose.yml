@@ -1,49 +1,34 @@
-version: "3.8"
-
 services:
+
   rabbit1:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:3-management
     hostname: rabbit1
     container_name: rabbit1
     environment:
-      - RABBITMQ_ERLANG_COOKIE=secretcookie
+      RABBITMQ_ERLANG_COOKIE: "secretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit1
     ports:
-      - "5672:5672"
       - "15672:15672"
+      - "5672:5672"
     volumes:
-      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./definitions.json:/etc/rabbitmq/definitions.json
-      - rabbit1_data:/var/lib/rabbitmq
-    networks:
-      - rabbitnet
 
   rabbit2:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:3-management
     hostname: rabbit2
     container_name: rabbit2
     environment:
-      - RABBITMQ_ERLANG_COOKIE=secretcookie
-    volumes:
-      - rabbit2_data:/var/lib/rabbitmq
-    networks:
-      - rabbitnet
+      RABBITMQ_ERLANG_COOKIE: "secretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit2
+    depends_on:
+      - rabbit1
 
   rabbit3:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:3-management
     hostname: rabbit3
     container_name: rabbit3
     environment:
-      - RABBITMQ_ERLANG_COOKIE=secretcookie
-    volumes:
-      - rabbit3_data:/var/lib/rabbitmq
-    networks:
-      - rabbitnet
-
-networks:
-  rabbitnet:
-
-volumes:
-  rabbit1_data:
-  rabbit2_data:
-  rabbit3_data:
+      RABBITMQ_ERLANG_COOKIE: "secretcookie"
+      RABBITMQ_NODENAME: rabbit@rabbit3
+    depends_on:
+      - rabbit1
